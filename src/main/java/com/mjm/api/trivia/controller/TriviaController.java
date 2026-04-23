@@ -28,7 +28,7 @@ public class TriviaController {
     @GetMapping("/questions")
     public List<TriviaQuestion> getQuestions(
             @RequestParam(defaultValue = "5") int limit,
-            @RequestParam(defaultValue = "random") String category) {
+            @RequestParam(defaultValue = "video-games") String category) {
         return service.getRandomQuestions(limit, category);
     }
 

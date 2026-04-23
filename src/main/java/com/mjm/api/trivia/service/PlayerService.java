@@ -38,9 +38,6 @@ public class PlayerService {
     }
 
     public List<Player> getLeaderboard() {
-        return playerRepository.findAll()
-                .stream()
-                .sorted((p1, p2) -> Integer.compare(p2.getScore(), p1.getScore()))
-                .toList();
+        return playerRepository.findAllByOrderByScoreDesc();
     }
 }
