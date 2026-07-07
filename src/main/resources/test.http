@@ -1,0 +1,17 @@
+
+# Load data from json
+# curl -X POST http://localhost:8080/api/v1/admin/load-data 
+
+# Get stuff 
+curl -X GET http://localhost:8080/api/v1/trivia/question
+
+
+
+
+
+# curl -X POST http://localhost:8080/api/v1/admin/load-data \
+#   -u mary:fun123 \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "firstName": "Alice"
+# }'
