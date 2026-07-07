@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RequestMapping("/api/v1/player")
+@RequestMapping("${app.api.base-path}/player")
 @RestController
 public class PlayerController {
     private PlayerService playerService;
