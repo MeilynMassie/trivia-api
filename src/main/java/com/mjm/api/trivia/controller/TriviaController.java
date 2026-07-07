@@ -13,7 +13,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/trivia")
+@RequestMapping("${app.api.base-path}/trivia")
 public class TriviaController {
 
     private final TriviaService service;
@@ -25,20 +25,20 @@ public class TriviaController {
     @GetMapping("/categories")
     public List<CategoryDTO> getAllCategories() {return service.getAllCategories();}
 
-    @GetMapping("/questions")
-    public List<TriviaQuestion> getQuestions(
-            @RequestParam(defaultValue = "5") int limit,
-            @RequestParam(defaultValue = "video-games") String category) {
-        return service.getRandomQuestions(limit, category);
-    }
+    // @GetMapping("/questions")
+    // public List<TriviaQuestion> getQuestions(
+    //         @RequestParam(defaultValue = "5") int limit,
+    //         @RequestParam(defaultValue = "video-games") String category) {
+    //     return service.getRandomQuestions(limit, category);
+    // }
 
-    @PostMapping("/submissions")
-    public ResponseEntity<AnswerResultDTO> submitAnswer(
-            @Valid @RequestBody AnswerSubmissionDTO submission
-    ) {
-        AnswerResultDTO result =
-                service.submitAnswer(submission);
+    // @PostMapping("/submissions")
+    // public ResponseEntity<AnswerResultDTO> submitAnswer(
+    //         @Valid @RequestBody AnswerSubmissionDTO submission
+    // ) {
+    //     AnswerResultDTO result =
+    //             service.submitAnswer(submission);
 
-        return ResponseEntity.ok(result);
-    }
+    //     return ResponseEntity.ok(result);
+    // }
 }

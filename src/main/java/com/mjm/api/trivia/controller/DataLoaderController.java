@@ -6,14 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("${app.api.base-path}/admin")
 public class DataLoaderController {
 
     private final DataLoaderService service;
 
-    public DataLoaderController(DataLoaderService service) {
-        this.service = service;
-    }
+    public DataLoaderController(DataLoaderService service) {this.service = service;}
 
     @PostMapping("/load-data")
     public String loadData() throws Exception {

@@ -1,0 +1,25 @@
+{
+  "name": "Spring Boot",
+  "image": "mcr.microsoft.com/devcontainers/java:21",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.github-vscode-theme",
+        "github.vscode-pull-request-github",
+        "humao.rest-client",
+        "ms-azuretools.vscode-containers",
+        "ms-azuretools.vscode-docker",
+        "redhat.java",
+        "redhat.vscode-yaml",
+        "tinkertrain.theme-panda",
+        "vmware.vscode-spring-boot",
+        "vscjava.vscode-gradle",
+        "vscjava.vscode-java-debug",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-java-test",
+        "vscjava.vscode-maven"
+      ]
+    }
+  }
+}
