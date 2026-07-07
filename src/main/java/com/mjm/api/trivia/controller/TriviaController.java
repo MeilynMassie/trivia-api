@@ -13,7 +13,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/v1/trivia")
+@RequestMapping("${app.api.base-path}/trivia")
 public class TriviaController {
 
     private final TriviaService service;
