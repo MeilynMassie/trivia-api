@@ -7,26 +7,26 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RequestMapping("/api/trivia/players")
+@RequestMapping("/api/v1/player")
 @RestController
 public class PlayerController {
-    private final PlayerService playerService;
+    private PlayerService playerService;
     public PlayerController(PlayerService playerService) { this.playerService = playerService; }
 
-    @PostMapping("/create")
-    public Player createPlayer(
-            @Valid @RequestBody CreatePlayerDTO dto
-    ) {
-        return playerService.createPlayer(dto.name());
+    @GetMapping
+    public List<Player> getAllPlayers() {
+        return playerService.getAllPlayers();
     }
 
-    @GetMapping("/{id}")
-    public Player getPlayer(@PathVariable Long id) {
-        return playerService.getPlayer(id);
-    }
-
-    @GetMapping("/leaderboard")
-    public List<Player> leaderboard() {
-        return playerService.getLeaderboard();
-    }
+    // @GetMapping("/{id}")
+    // public Player getPlayer(@PathVariable Long id) {
+    //     return playerService.getPlayer(id);
+    // }
+    
+    // @PostMapping
+    // public void createPlayer(
+    //         @Valid @RequestBody CreatePlayerDTO dto
+    // ) {
+    //     playerService.createPlayer(dto.name());
+    // }
 }
