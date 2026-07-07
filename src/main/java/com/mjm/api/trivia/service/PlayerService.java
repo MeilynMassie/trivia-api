@@ -5,39 +5,10 @@ import com.mjm.api.trivia.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
-public class PlayerService {
-
-    private final PlayerRepository playerRepository;
-
-    public PlayerService(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
-    }
-
-    public Player createPlayer(String name) {
-        Player player = new Player();
-        player.setName(name);
-        player.setScore(0);
-        return playerRepository.save(player);
-    }
-
-    public Player updateScore(Long playerId, boolean correct) {
-        Player player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new RuntimeException("Player not found"));
-
-        if (correct) {
-            player.setScore(player.getScore() + 1);
-        }
-
-        return playerRepository.save(player);
-    }
-
-    public Player getPlayer(Long id) {
-        return playerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Player not found"));
-    }
-
-    public List<Player> getLeaderboard() {
-        return playerRepository.findAllByOrderByScoreDesc();
-    }
+public interface PlayerService {
+    Player createPlayer(String name);
+    Player getPlayer(Long id);
+    List<Player> getAllPlayers();
+    // Score
+    Player updateScore(Long playerId, boolean correct);
 }
