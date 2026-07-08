@@ -8,9 +8,6 @@ import org.hibernate.type.SqlTypes;
 import java.util.List;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TriviaQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trivia_seq")
