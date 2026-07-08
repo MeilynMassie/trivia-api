@@ -30,12 +30,12 @@ public class DataLoaderServiceImpl implements DataLoaderService{
         PathMatchingResourcePatternResolver resolver =
                 new PathMatchingResourcePatternResolver();
 
-        // Resource[] resources = resolver.getResources("classpath:/data/*.json");
-        Resource[] resources = {
-                resolver.getResource("classpath:/data/animals.json"),
-                resolver.getResource("classpath:/data/general.json"),
-                resolver.getResource("classpath:/data/video-games.json")
-        };
+        Resource[] resources = resolver.getResources("classpath:/data/*.json");
+        // Resource[] resources = {
+        //         resolver.getResource("classpath:/data/animals.json"),
+        //         resolver.getResource("classpath:/data/general.json"),
+        //         resolver.getResource("classpath:/data/video-games.json")
+        // };
 
         for (Resource resource : resources) {
             System.out.println("Loading: " + resource.getFilename());

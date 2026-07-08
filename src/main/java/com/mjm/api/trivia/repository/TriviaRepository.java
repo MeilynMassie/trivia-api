@@ -12,5 +12,5 @@ public interface TriviaRepository extends JpaRepository<TriviaQuestion, Long> {
     List<String> findAllCategories();
 
     @Query(value = "SELECT * FROM trivia_question WHERE category = :category ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
-    List<TriviaQuestion> findRandomQuestions(@Param("limit") int limit, @Param("category") String category);
+    List<TriviaQuestion> getQuestionsByCategory(@Param("limit") int limit, @Param("category") String category);
 }
