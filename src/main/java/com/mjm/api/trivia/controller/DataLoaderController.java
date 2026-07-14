@@ -11,7 +11,9 @@ public class DataLoaderController {
 
     private final DataLoaderService service;
 
-    public DataLoaderController(DataLoaderService service) {this.service = service;}
+    public DataLoaderController(DataLoaderService service) {
+        this.service = service;
+    }
 
     @PostMapping("/load-data")
     public String loadData() throws Exception {

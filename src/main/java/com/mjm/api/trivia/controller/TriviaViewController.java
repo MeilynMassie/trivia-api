@@ -19,7 +19,8 @@ public class TriviaViewController {
     public TriviaViewController(TriviaService triviaService) {
         this.triviaService = triviaService;
     }
-    @GetMapping("/mainMenu")
+
+    @GetMapping("/")
     public String showMainMenu(Model model) {
         List<String> categories = triviaService.getAllCategories();
         model.addAttribute("triviaBasePath", triviaBasePath);
