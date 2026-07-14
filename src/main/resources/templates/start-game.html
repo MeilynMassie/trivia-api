@@ -9,7 +9,13 @@
     <body>
         <div class="container">
             <h1>Welcome to the Trivia Game!</h1>
-            <p th:text="${questions}"> </p>
+            <p th:each="question : ${questions}" th:text="${question.question}"> </p>
+            <form>
+                <div th:each="choice : ${question.choices}">
+                    <input type="radio" th:name="answer" th:value="${choice}" />
+                    <label th:text="${choice}"></label>
+                </div>
+            </form>
         </div>
-    </body>`
-</html>`
+    </body>
+</html>

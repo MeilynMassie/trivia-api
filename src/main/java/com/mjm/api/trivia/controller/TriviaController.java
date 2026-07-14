@@ -21,12 +21,14 @@ public class TriviaController {
     }
 
     @GetMapping("/categories")
-    public List<String> getAllCategories() {return triviaService.getAllCategories();}
+    public List<String> getAllCategories() {
+        return triviaService.getAllCategories();
+    }
 
     @PostMapping("/questions")
     public String getQuestions(
             @RequestParam(defaultValue = "5") int limit,
-            @RequestParam(defaultValue = "video-games") String category, 
+            @RequestParam(defaultValue = "video-games") String category,
             Model model) {
         List<TriviaQuestion> questions = triviaService.getQuestionsByCategory(limit, category);
         model.addAttribute("questions", questions);
@@ -35,11 +37,11 @@ public class TriviaController {
 
     // @PostMapping("/submissions")
     // public ResponseEntity<AnswerResultDTO> submitAnswer(
-    //         @Valid @RequestBody AnswerSubmissionDTO submission
+    // @Valid @RequestBody AnswerSubmissionDTO submission
     // ) {
-    //     AnswerResultDTO result =
-    //             triviaService.submitAnswer(submission);
+    // AnswerResultDTO result =
+    // triviaService.submitAnswer(submission);
 
-    //     return ResponseEntity.ok(result);
+    // return ResponseEntity.ok(result);
     // }
 }
