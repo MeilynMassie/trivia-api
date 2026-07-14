@@ -11,6 +11,8 @@ import java.util.List;
 @Entity
 public class TriviaQuestion {
     @Id
+    @Getter
+    @Setter
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trivia_seq")
     @SequenceGenerator(name = "trivia_seq", sequenceName = "trivia_question_id_seq", allocationSize = 1)
     private Long id;
