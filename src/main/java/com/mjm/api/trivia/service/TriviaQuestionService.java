@@ -11,4 +11,5 @@ public interface TriviaQuestionService {
     List<String> getCategories();
     // Page<TriviaQuestion> getQuestions(int page, int size, String category);
     List<TriviaQuestion> getQuestions(String category, int limit);
+    Boolean checkAnswer(Long questionId, Long choiceId);
 }

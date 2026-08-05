@@ -6,10 +6,6 @@ import java.util.List;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.mjm.api.trivia.dto.TriviaQuestionDTO;
@@ -98,5 +94,18 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     public List<TriviaQuestion> getQuestions(String category, int limit) {
 
         return triviaQuestionRepository.findByCategory(category, limit);
+    }
+
+
+    @Override
+    public Boolean checkAnswer(Long questionId, Long choiceId) {
+        TriviaQuestion question = triviaQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new RuntimeException("Question not found"));
+       return question.getChoices()
+                .stream()
+                .filter(c -> c.getId().equals(choiceId))
+                .findFirst()
+                .orElseThrow()
+                .getIsCorrect();
     }
 }

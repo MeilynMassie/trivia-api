@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-
-
-
 @RequestMapping("${app.api.base-path}/player")
 @RestController
 public class PlayerController {
@@ -42,7 +39,6 @@ public class PlayerController {
     public void addPlayer(@RequestBody Player player) {
         playerService.addPlayer(player);
     }
-    
 
     @PutMapping("/{id}/score")
     public void updateScore(@PathVariable Long id) {

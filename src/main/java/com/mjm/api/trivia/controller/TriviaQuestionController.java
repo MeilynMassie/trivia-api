@@ -5,16 +5,11 @@ import com.mjm.api.trivia.service.TriviaQuestionService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
 
 
 @RequestMapping("${app.api.base-path}/trivia-question")
@@ -45,5 +40,12 @@ public class TriviaQuestionController {
             @RequestParam(defaultValue = "10") int limit) {
 
         return triviaQuestionService.getQuestions(category, limit);
+    }
+
+    @GetMapping("{questionId}/{choiceId}")
+    public Boolean checkAnswer(@PathVariable Long questionId, @PathVariable Long choiceId) {
+        System.out.println("Question ID: " + questionId);
+        System.out.println("Choice ID: " + choiceId);
+        return triviaQuestionService.checkAnswer(questionId, choiceId);
     }
 }

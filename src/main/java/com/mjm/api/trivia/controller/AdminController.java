@@ -1,11 +1,9 @@
 package com.mjm.api.trivia.controller;
 
-import com.mjm.api.trivia.model.TriviaQuestion;
 import com.mjm.api.trivia.service.PlayerService;
 import com.mjm.api.trivia.service.TriviaQuestionService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
