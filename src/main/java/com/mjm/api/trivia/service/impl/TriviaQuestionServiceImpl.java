@@ -1,0 +1,102 @@
+package com.mjm.api.trivia.service.impl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.mjm.api.trivia.dto.TriviaQuestionDTO;
+import com.mjm.api.trivia.model.TriviaChoice;
+import com.mjm.api.trivia.model.TriviaQuestion;
+import com.mjm.api.trivia.repository.TriviaQuestionRepository;
+import com.mjm.api.trivia.service.TriviaQuestionService;
+
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TriviaQuestionServiceImpl implements TriviaQuestionService{
+    private TriviaQuestionRepository triviaQuestionRepository;
+    private final ObjectMapper objectMapper;
+
+    public TriviaQuestionServiceImpl(TriviaQuestionRepository triviaQuestionRepository) { 
+        this.objectMapper = new ObjectMapper();
+        this.triviaQuestionRepository = triviaQuestionRepository; 
+    }
+
+
+    @Override
+    public List<String> getCategories() {
+        return triviaQuestionRepository.findAllCategories();
+    }
+
+    @Transactional
+    @Override
+    public void loadQuestions() {
+
+        PathMatchingResourcePatternResolver resolver =
+                new PathMatchingResourcePatternResolver();
+
+            Resource[] resources;
+            try {
+                resources = resolver.getResources("classpath:/data/*.json");
+            
+
+                for (Resource resource : resources) {
+                    System.out.println("Loading: " + resource.getFilename());
+                    List<TriviaQuestionDTO> questions =
+                        objectMapper.readValue(
+                                resource.getInputStream(),
+                                new TypeReference<List<TriviaQuestionDTO>>() {});
+
+                for (TriviaQuestionDTO dto : questions) {
+
+                    TriviaQuestion question = new TriviaQuestion();
+                    question.setQuestion(dto.getQuestion());
+                    question.setCategory(dto.getCategory());
+
+                    List<TriviaChoice> choices = new ArrayList<>();
+
+                    short order = 1;
+
+                    for (String choiceText : dto.getChoices()) {
+
+                        TriviaChoice choice = new TriviaChoice();
+                        choice.setQuestion(question);
+                        choice.setChoiceText(choiceText);
+                        choice.setDisplayOrder(order++);
+                        choice.setIsCorrect(choiceText.equals(dto.getAnswer()));
+
+                        choices.add(choice);
+                    }
+                    question.setChoices(choices);
+                    triviaQuestionRepository.save(question);
+                }
+            }
+            System.out.println("All resources loaded");
+        } catch (IOException e) {
+                throw new RuntimeException("Failed to load questions");
+        }   
+    }
+
+
+    // @Override
+    // public List<TriviaQuestion> getQuestions(int limit, String category) {
+
+    //     return triviaQuestionRepository.findByCategory(category, pageable);
+    // }
+    @Override
+    public List<TriviaQuestion> getQuestions(String category, int limit) {
+
+        return triviaQuestionRepository.findByCategory(category, limit);
+    }
+}

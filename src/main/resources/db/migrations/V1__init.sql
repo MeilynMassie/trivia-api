@@ -1,18 +1,36 @@
-CREATE TABLE IF NOT EXISTS players (
+-- Players
+CREATE TABLE IF NOT EXISTS player (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255),
-    score INTEGER NOT NULL DEFAULT 0
+    name VARCHAR(255) NOT NULL,
+    score INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Questions
 CREATE TABLE IF NOT EXISTS trivia_question (
-    id BIGINT PRIMARY KEY,
-    category VARCHAR(100),
-    question TEXT,
-    answer VARCHAR(255),
-    choices JSONB
+    id BIGSERIAL PRIMARY KEY,
+    category VARCHAR(100) NOT NULL,
+    question TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE SEQUENCE IF NOT EXISTS trivia_question_id_seq START WITH 1 INCREMENT BY 1;
+-- Choices
+CREATE TABLE IF NOT EXISTS trivia_choice (
+    id BIGSERIAL PRIMARY KEY,
+    question_id BIGINT NOT NULL,
+    choice_text TEXT NOT NULL,
+    display_order SMALLINT NOT NULL,
+    is_correct BOOLEAN NOT NULL DEFAULT FALSE,
 
-ALTER TABLE trivia_question
-    ALTER COLUMN id SET DEFAULT nextval('trivia_question_id_seq');
+    CONSTRAINT fk_trivia_choice_question
+        FOREIGN KEY (question_id)
+        REFERENCES trivia_question(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_trivia_choice_order
+        UNIQUE (question_id, display_order)
+);
+
+CREATE INDEX IF NOT EXISTS idx_trivia_choice_question_id
+    ON trivia_choice(question_id);

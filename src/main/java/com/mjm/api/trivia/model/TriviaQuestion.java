@@ -3,38 +3,35 @@ package com.mjm.api.trivia.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(name = "trivia_question")
 public class TriviaQuestion {
+
     @Id
-    @Getter
-    @Setter
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trivia_seq")
-    @SequenceGenerator(name = "trivia_seq", sequenceName = "trivia_question_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Setter
-    @Column(columnDefinition = "VARCHAR(100)")
     private String category;
 
-    @Column(columnDefinition = "TEXT")
-    @Getter
-    @Setter
     private String question;
 
-    @Getter
-    @Setter
-    @Column(columnDefinition = "VARCHAR(255)")
-    private String answer;
+    @Column(
+        name = "created_at",
+        insertable = false,
+        updatable = false
+    )
+    private LocalDateTime createdAt;
 
-    @Getter
-    @Setter
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private List<String> choices;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<TriviaChoice> choices;
 }
