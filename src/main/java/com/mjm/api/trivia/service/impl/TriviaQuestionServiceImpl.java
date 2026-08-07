@@ -92,7 +92,6 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     // }
     @Override
     public List<TriviaQuestion> getQuestions(String category, int limit) {
-
         return triviaQuestionRepository.findByCategory(category, limit);
     }
 
@@ -101,11 +100,11 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     public Boolean checkAnswer(Long questionId, Long choiceId) {
         TriviaQuestion question = triviaQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
-       return question.getChoices()
+        return question.getChoices()
                 .stream()
                 .filter(c -> c.getId().equals(choiceId))
                 .findFirst()
-                .orElseThrow()
+                .orElseThrow(() -> new RuntimeException("Choice not found"))
                 .getIsCorrect();
     }
 }
