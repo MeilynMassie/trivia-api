@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,18 +51,18 @@ public class TriviaQuestionServiceImplTest {
 
     @Test
     void returnTwoQuestionsForVideoGames() {
-        TriviaQuestion q1 = new TriviaQuestion();
-        q1.setQuestion("Q1?");
-        q1.setCategory("video-games");
-        TriviaQuestion q2 = new TriviaQuestion();
-        q2.setQuestion("Q2?");
-        q2.setCategory("video-games");
-        List<TriviaQuestion> expected = List.of(q1, q2);
-        when(triviaQuestionRepository.findByCategory("video-games", 5))
-                .thenReturn(expected);
-        List<TriviaQuestion> result = service.getQuestions("video-games", 5);
+        List<TriviaQuestion> expected = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            TriviaQuestion q1 = new TriviaQuestion();
+            q1.setQuestion("Question?");
+            q1.setCategory("video-games");
+            expected.add(q1);
+        }
+        when(triviaQuestionRepository.findByCategory("video-games", 2))
+            .thenReturn(expected);
+        List<TriviaQuestion> result = service.getQuestions("video-games", 2);
         assertEquals(expected, result);
-        verify(triviaQuestionRepository).findByCategory("video-games", 5);
+        verify(triviaQuestionRepository).findByCategory("video-games", 2);
     }
 
     // Tests for CheckAnswer
@@ -75,7 +76,7 @@ public class TriviaQuestionServiceImplTest {
         q1.setChoices(List.of(c1));
         when(triviaQuestionRepository.findById(q1.getId()))
             .thenReturn(Optional.of(q1));
-        Boolean result = service.checkAnswer(q1.getId(), c1.getId());
+        boolean result = service.checkAnswer(q1.getId(), c1.getId());
         assertTrue(result);
         verify(triviaQuestionRepository).findById(q1.getId());
     }
@@ -90,7 +91,7 @@ public class TriviaQuestionServiceImplTest {
         q1.setChoices(List.of(c1));
         when(triviaQuestionRepository.findById(q1.getId()))
             .thenReturn(Optional.of(q1));
-        Boolean result = service.checkAnswer(q1.getId(), c1.getId());
+        boolean result = service.checkAnswer(q1.getId(), c1.getId());
         assertFalse(result);
     }
 
@@ -125,6 +126,15 @@ public class TriviaQuestionServiceImplTest {
     }
 
     // End of tests for checkAnswer()
+
+    // Tests for loadData()
+    @Test
+    void loadData() {
+        // TODO Add tests for loadData()
+        // TODO Test shouldReturnAllResourcesLoaded()
+        // TODO Test shouldThrowFailedToLoadQuestions()
+    }
+    // End of tests for loadData()
 }
 
 
