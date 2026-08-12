@@ -30,6 +30,7 @@ public class TriviaChoice {
     @Column(name = "display_order")
     private Short displayOrder;
 
+    @JsonIgnore
     @Column(name = "is_correct")
     private Boolean isCorrect;
 }
