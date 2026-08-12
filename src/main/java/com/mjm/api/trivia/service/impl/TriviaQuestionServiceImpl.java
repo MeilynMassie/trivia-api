@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.mjm.api.trivia.dto.TriviaQuestionDTO;
 import com.mjm.api.trivia.model.TriviaChoice;
@@ -14,18 +15,20 @@ import com.mjm.api.trivia.model.TriviaQuestion;
 import com.mjm.api.trivia.repository.TriviaQuestionRepository;
 import com.mjm.api.trivia.service.TriviaQuestionService;
 
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     private TriviaQuestionRepository triviaQuestionRepository;
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+    private final ResourcePatternResolver resolver;
+                
 
-    public TriviaQuestionServiceImpl(TriviaQuestionRepository triviaQuestionRepository) { 
-        this.objectMapper = new ObjectMapper();
+    public TriviaQuestionServiceImpl(TriviaQuestionRepository triviaQuestionRepository, ObjectMapper objectMapper, ResourcePatternResolver resolver) { 
+        this.objectMapper = objectMapper;
+        this.resolver = resolver;
         this.triviaQuestionRepository = triviaQuestionRepository; 
     }
 
@@ -38,21 +41,17 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     @Transactional
     @Override
     public void loadQuestions() {
+        Resource[] resources;
+        try {
+            resources = resolver.getResources("classpath:/data/*.json");
+        
 
-        PathMatchingResourcePatternResolver resolver =
-                new PathMatchingResourcePatternResolver();
-
-            Resource[] resources;
-            try {
-                resources = resolver.getResources("classpath:/data/*.json");
-            
-
-                for (Resource resource : resources) {
-                    System.out.println("Loading: " + resource.getFilename());
-                    List<TriviaQuestionDTO> questions =
-                        objectMapper.readValue(
-                                resource.getInputStream(),
-                                new TypeReference<List<TriviaQuestionDTO>>() {});
+            for (Resource resource : resources) {
+                System.out.println("Loading: " + resource.getFilename());
+                List<TriviaQuestionDTO> questions =
+                    objectMapper.readValue(
+                            resource.getInputStream(),
+                            new TypeReference<List<TriviaQuestionDTO>>() {});
 
                 for (TriviaQuestionDTO dto : questions) {
 
@@ -81,7 +80,7 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
             System.out.println("All resources loaded");
         } catch (IOException e) {
                 throw new RuntimeException("Failed to load questions");
-        }   
+        }
     }
 
 

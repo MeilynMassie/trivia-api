@@ -4,19 +4,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.io.Resource;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mjm.api.trivia.dto.TriviaQuestionDTO;
 import com.mjm.api.trivia.model.TriviaChoice;
 import com.mjm.api.trivia.model.TriviaQuestion;
 import com.mjm.api.trivia.repository.TriviaQuestionRepository;
@@ -26,6 +40,12 @@ import com.mjm.api.trivia.service.impl.TriviaQuestionServiceImpl;
 public class TriviaQuestionServiceImplTest {
     @Mock
     private TriviaQuestionRepository triviaQuestionRepository;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private ResourcePatternResolver resolver;
 
     @InjectMocks
     private TriviaQuestionServiceImpl service;
@@ -65,76 +85,154 @@ public class TriviaQuestionServiceImplTest {
         verify(triviaQuestionRepository).findByCategory("video-games", 2);
     }
 
-    // Tests for CheckAnswer
-    @Test
-    void shouldReturnTrueAnswerIsCorrect() {
-        TriviaQuestion q1 = new TriviaQuestion();
-        q1.setId((long)1);
-        TriviaChoice c1 = new TriviaChoice();
-        c1.setId((long)123);
-        c1.setIsCorrect(true);
-        q1.setChoices(List.of(c1));
-        when(triviaQuestionRepository.findById(q1.getId()))
-            .thenReturn(Optional.of(q1));
-        boolean result = service.checkAnswer(q1.getId(), c1.getId());
-        assertTrue(result);
-        verify(triviaQuestionRepository).findById(q1.getId());
-    }
+    @Nested
+    class CheckAnswerTests {
+        TriviaQuestion q1;
+        TriviaChoice c1;
 
-    @Test
-    void shouldReturnFalseAnswerIsNotCorrect() {
-        TriviaQuestion q1 = new TriviaQuestion();
-        q1.setId(1L);
-        TriviaChoice c1 = new TriviaChoice();
-        c1.setId(123L);
-        c1.setIsCorrect(false);
-        q1.setChoices(List.of(c1));
-        when(triviaQuestionRepository.findById(q1.getId()))
-            .thenReturn(Optional.of(q1));
-        boolean result = service.checkAnswer(q1.getId(), c1.getId());
-        assertFalse(result);
-    }
 
-    @Test
-    void shouldThrowExceptionWhenQuestionNotFound() {
-        when(triviaQuestionRepository.findById(1L))
-                .thenReturn(Optional.empty());
+        @BeforeEach 
+        void init() {
+            q1 = new TriviaQuestion();
+            q1.setId(1L);
+            c1 = new TriviaChoice();
+            c1.setId(123L);
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> service.checkAnswer(1L, 123L)
-        );
-
-        assertEquals("Question not found", exception.getMessage());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenChoiceNotFound() {
-        TriviaQuestion q1 = new TriviaQuestion();
-        q1.setId(1L);
-        q1.setChoices(List.of());
-
-        when(triviaQuestionRepository.findById(q1.getId()))
+            when(triviaQuestionRepository.findById(q1.getId()))
                 .thenReturn(Optional.of(q1));
+        }
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> service.checkAnswer(q1.getId(), 123L)
-        );
+        @Test
+        void shouldReturnTrueAnswerIsCorrect() {
+            c1.setIsCorrect(true);
+            q1.setChoices(List.of(c1));
+            boolean result = service.checkAnswer(q1.getId(), c1.getId());
+            assertTrue(result);
+            verify(triviaQuestionRepository).findById(q1.getId());
+        }
 
-        assertEquals("Choice not found", exception.getMessage());
+        @Test
+        void shouldReturnFalseAnswerIsNotCorrect() {
+            c1.setIsCorrect(false);
+            q1.setChoices(List.of(c1));
+            boolean result = service.checkAnswer(q1.getId(), c1.getId());
+            assertFalse(result);
+        }
+
+        @Test
+        void shouldThrowExceptionWhenQuestionNotFound() {
+            when(triviaQuestionRepository.findById(1L))
+                    .thenReturn(Optional.empty());
+
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> service.checkAnswer(1L, 123L)
+            );
+
+            assertEquals("Question not found", exception.getMessage());
+        }
+
+        @Test
+        void shouldThrowExceptionWhenChoiceNotFound() {
+            q1.setChoices(List.of());
+
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> service.checkAnswer(q1.getId(), 123L)
+            );
+
+            assertEquals("Choice not found", exception.getMessage());
+        }
     }
 
-    // End of tests for checkAnswer()
+    @Nested
+    class LoadDataTests {
+        private Resource resource;
+        private Resource[] resources;
+        private TriviaQuestionDTO dto;
+        private List<TriviaQuestionDTO> testData;
+        private InputStream inputStream;
+        String path = "classpath:/data/*.json";
 
-    // Tests for loadData()
-    @Test
-    void loadData() {
-        // TODO Add tests for loadData()
-        // TODO Test shouldReturnAllResourcesLoaded()
-        // TODO Test shouldThrowFailedToLoadQuestions()
+
+        @BeforeEach
+        void init() throws IOException{
+            resource = mock(Resource.class);
+            inputStream = new ByteArrayInputStream(new byte[0]);
+            resources = new Resource[] { resource };
+            dto = new TriviaQuestionDTO();
+
+            dto.setQuestion("Q1");
+            dto.setCategory("testCategory");
+            dto.setAnswer("C1");
+            dto.setChoices(List.of("C1", "C2", "C3", "C4"));
+
+            testData = List.of(dto);
+
+            when(resolver.getResources(path))
+                .thenReturn(resources);
+            when(resource.getFilename())
+                .thenReturn("questions.json");
+            when(resource.getInputStream())
+                .thenReturn(inputStream);
+            when(objectMapper.readValue(
+                    any(InputStream.class),
+                    ArgumentMatchers.<TypeReference<List<TriviaQuestionDTO>>>any()))
+                .thenReturn(testData);
+        }
+        
+        @Test
+        // Verifies resolver, mapper, save
+        void shouldLoadQuestionsAndSaveThem() throws IOException {
+            service.loadQuestions();
+
+            verify(resolver).getResources(path);
+            verify(resource).getInputStream();
+            
+            verify(objectMapper).readValue(
+                any(InputStream.class),
+                ArgumentMatchers.<TypeReference<List<TriviaQuestionDTO>>>any());
+            verify(triviaQuestionRepository).save(any(TriviaQuestion.class));
+        }
+
+        @Test
+        // Test for data validation
+        void shouldCreateQuestionWithCorrectChoices() {
+
+            service.loadQuestions();
+
+            ArgumentCaptor<TriviaQuestion> questionCaptor =
+                    ArgumentCaptor.forClass(TriviaQuestion.class);
+
+            verify(triviaQuestionRepository).save(questionCaptor.capture());
+
+            TriviaQuestion savedQuestion = questionCaptor.getValue();
+
+            assertEquals("Q1", savedQuestion.getQuestion());
+            assertEquals("testCategory", savedQuestion.getCategory());
+
+            assertEquals(4, savedQuestion.getChoices().size());
+
+            TriviaChoice choice1 = savedQuestion.getChoices().get(0);
+            TriviaChoice choice2 = savedQuestion.getChoices().get(1);
+            TriviaChoice choice3 = savedQuestion.getChoices().get(2);
+            TriviaChoice choice4 = savedQuestion.getChoices().get(3);
+
+            assertEquals("C1", choice1.getChoiceText());
+            assertTrue(choice1.getIsCorrect());
+            assertEquals((short)1, choice1.getDisplayOrder());
+
+            assertEquals("C2", choice2.getChoiceText());
+            assertFalse(choice2.getIsCorrect());
+            assertEquals((short)2, choice2.getDisplayOrder());
+
+            assertEquals("C3", choice3.getChoiceText());
+            assertFalse(choice3.getIsCorrect());
+            assertEquals((short)3, choice3.getDisplayOrder());
+
+            assertEquals("C4", choice4.getChoiceText());
+            assertFalse(choice4.getIsCorrect());
+            assertEquals((short)4, choice4.getDisplayOrder());
+        }
     }
-    // End of tests for loadData()
 }
-
-
