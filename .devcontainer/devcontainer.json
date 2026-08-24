@@ -1,6 +1,6 @@
 {
   "name": "Spring Boot",
-  "image": "mcr.microsoft.com/devcontainers/java:21",
+  "image": "mcr.microsoft.com/devcontainers/java:1-25-bookworm",
   "customizations": {
     "vscode": {
       "extensions": [
