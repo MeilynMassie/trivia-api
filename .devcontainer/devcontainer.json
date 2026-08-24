@@ -1,6 +1,9 @@
 {
   "name": "Spring Boot",
-  "image": "mcr.microsoft.com/devcontainers/java:25",
+  // "image": "mcr.microsoft.com/devcontainers/java:25",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
