@@ -17,10 +17,13 @@
     <CONTAINER_NAME>
     ```
 4. TO TEST FROM SCRATCH (-v deletes volume data for postgres too):
-    a. `sudo docker compose down -v --remove-orphans`
-    b. `sudo docker ps -a`
-    c. `sudo docker compose up -d --build`
-5. CONNECT TO PSQL
+
+   a. `sudo docker compose down -v --remove-orphans`
+
+   b. `sudo docker ps -a`
+
+   c. `sudo docker compose up -d --build`
+6. CONNECT TO PSQL
     `sudo docker exec -it postgres psql -U <username> -d <database_name>`
 
 
@@ -30,17 +33,25 @@
 
 1. TO CREATE SSH KEY FOR GIT
     **NOTE: REMOTE SHOULD SAY git@github.com:<USERNAME>/<REP>.git NOT https://github.com/<USERNAME>/<REP>.git**
-    a. `ssh-keygen -t ed25519 -C "<EMAIL>"`
-    b. Add ssh key to github
-    c. `ssh -T git@github.com`
-    d. `git remote set-url origin git@github.com:<USERNAME>/<REPO_NAME>.git`
-2. SET USERNAME AND EMAIL GLOBALLY
-    a. `git config --global user.name "<USERNAME>"`
-    B. `git config --global user.email "<EMAIL>"`
-4. VERIFY USERNAME AND EMAIL
-    a. `git config user.name`
-    b. `git config user.email`
-5. TO CHANGE USERNAME AND EMAIL IN COMMIT (ALSO EASIER WITH A GIT LIBRARY)
+
+   a. `ssh-keygen -t ed25519 -C "<EMAIL>"`
+
+   b. Add ssh key to github
+
+   c. `ssh -T git@github.com`
+
+   d. `git remote set-url origin git@github.com:<USERNAME>/<REPO_NAME>.git`
+3. SET USERNAME AND EMAIL GLOBALLY
+
+   a. `git config --global user.name "<USERNAME>"`
+
+   b. `git config --global user.email "<EMAIL>"`
+5. VERIFY USERNAME AND EMAIL
+
+   a. `git config user.name`
+
+   b. `git config user.email`
+7. TO CHANGE USERNAME AND EMAIL IN COMMIT (ALSO EASIER WITH A GIT LIBRARY)
     ```
     git filter-branch --env-filter '
     OLD_EMAIL="<WRONG_EMAIL>"
@@ -63,6 +74,9 @@
 ---
 
 DB_TABLE=
+
 DB_USERNAME=
+
 DB_PASSWORD=
+
 DB_URL=
