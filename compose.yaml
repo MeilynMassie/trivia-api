@@ -1,0 +1,27 @@
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${DB_TABLE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  trivia-api:
+    container_name: api
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
