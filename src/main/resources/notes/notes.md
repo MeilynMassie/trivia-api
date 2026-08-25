@@ -1,0 +1,68 @@
+### DOCKER
+
+---
+
+1. TO REMOVE ONE CONTAINER
+    `sudo docker rm -f <CONTAINER_NAME>`
+2. TO REMOVE ALL CONTAINERS:
+    `sudo docker rm -f $(sudo docker ps -aq)`
+3. IF RUNNING ONLY ONE CONTAINER AND DON'T HAVE A COMPOSE.YAML
+    ```
+    sudo docker run -d \
+    --name <CONTAINER_NAME> \
+    -p 8080:8080 \
+    -e DB_URL="jdbc:<DB_SOURCE>://<DB_CONTAINER_NAME>/<DB_NAME>" \
+    -e DB_USERNAME="<DB_USERNAME>" \
+    -e DB_PASSWORD="<DB_PASSWORD>" \
+    <CONTAINER_NAME>
+    ```
+4. TO TEST FROM SCRATCH (-v deletes volume data for postgres too):
+    a. `sudo docker compose down -v --remove-orphans`
+    b. `sudo docker ps -a`
+    c. `sudo docker compose up -d --build`
+5. CONNECT TO PSQL
+    `sudo docker exec -it postgres psql -U <username> -d <database_name>`
+
+
+### GIT 
+
+---
+
+1. TO CREATE SSH KEY FOR GIT
+    **NOTE: REMOTE SHOULD SAY git@github.com:<USERNAME>/<REP>.git NOT https://github.com/<USERNAME>/<REP>.git**
+    a. `ssh-keygen -t ed25519 -C "<EMAIL>"`
+    b. Add ssh key to github
+    c. `ssh -T git@github.com`
+    d. `git remote set-url origin git@github.com:<USERNAME>/<REPO_NAME>.git`
+2. SET USERNAME AND EMAIL GLOBALLY
+    a. `git config --global user.name "<USERNAME>"`
+    B. `git config --global user.email "<EMAIL>"`
+4. VERIFY USERNAME AND EMAIL
+    a. `git config user.name`
+    b. `git config user.email`
+5. TO CHANGE USERNAME AND EMAIL IN COMMIT (ALSO EASIER WITH A GIT LIBRARY)
+    ```
+    git filter-branch --env-filter '
+    OLD_EMAIL="<WRONG_EMAIL>"
+    CORRECT_NAME="<CORRECT_USERNAME>"
+    CORRECT_EMAIL="<CORRECT_EMAIL>"
+    if < "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" >; then
+        export GIT_AUTHOR_NAME="$CORRECT_NAME"
+        export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"
+    fi
+
+    if < "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" >; then
+        export GIT_COMMITTER_NAME="$CORRECT_NAME"
+        export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"
+    fi
+    ' -- --all
+    ```
+
+### VARS - .ENV TEMPLATE
+
+---
+
+DB_TABLE=
+DB_USERNAME=
+DB_PASSWORD=
+DB_URL=
