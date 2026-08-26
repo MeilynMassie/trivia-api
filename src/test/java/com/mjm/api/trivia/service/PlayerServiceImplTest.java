@@ -1,174 +1,176 @@
-// package com.mjm.api.trivia.service;
+package com.mjm.api.trivia.service;
 
-// import static org.junit.jupiter.api.Assertions.assertEquals;
-// import static org.junit.jupiter.api.Assertions.assertThrows;
-// import static org.mockito.Mockito.verify;
-// import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-// import java.util.List;
-// import java.util.Optional;
+import java.util.List;
 
-// import org.junit.jupiter.api.Test;
-// import org.junit.jupiter.api.extension.ExtendWith;
-// import org.mockito.InjectMocks;
-// import org.mockito.Mock;
-// import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-// import com.mjm.api.trivia.model.Player;
-// import com.mjm.api.trivia.repository.PlayerRepository;
-// import com.mjm.api.trivia.service.impl.PlayerServiceImpl;
+import com.mjm.api.trivia.model.Player;
+import com.mjm.api.trivia.repository.PlayerRepository;
+import com.mjm.api.trivia.service.impl.PlayerServiceImpl;
 
-// @ExtendWith(MockitoExtension.class)
-// public class PlayerServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+public class PlayerServiceImplTest {
 
-//     @Mock
-//     private PlayerRepository playerRepository;
+    @Mock
+    private PlayerRepository playerRepository;
 
-//     @InjectMocks
-//     private PlayerServiceImpl playerService;
+    @InjectMocks
+    private PlayerServiceImpl playerService;
 
-//     @Test
-//     void shouldReturnAllPlayers() {
-//         Player player1 = new Player();
-//         player1.setId(1L);
-//         player1.setName("Dummy 1");
+    @Test
+    void shouldReturnAllPlayers() {
+        Player player1 = new Player();
+        player1.setId(1L);
+        player1.setName("Dummy 1");
 
-//         Player player2 = new Player();
-//         player2.setId(2L);
-//         player2.setName("Dummy 2");
+        Player player2 = new Player();
+        player2.setId(2L);
+        player2.setName("Dummy 2");
 
-//         List<Player> expected = List.of(player1, player2);
+        List<Player> expected = List.of(player1, player2);
 
-//         when(playerRepository.findAll())
-//             .thenReturn(expected);
+        when(playerRepository.findAll())
+            .thenReturn(expected);
 
-//         List<Player> actual = playerService.getAllPlayers();
+        List<Player> actual = playerService.getAllPlayers();
 
-//         assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
-//         verify(playerRepository).findAll();
-//     }
+        verify(playerRepository).findAll();
+    }
 
-//     @Test
-//     void shouldReturnAPlayer() {
-//         Player expected = new Player();
-//         expected.setId(1L);
-//         expected.setName("Dummy");
+    @Test
+    void shouldReturnAPlayer() {
+        Player expected = new Player();
+        expected.setId(1L);
+        expected.setName("Dummy");
 
-//         when(playerRepository.findById(expected.getId()))
-//             .thenReturn(Optional.of(expected));
-        
-//         Optional<Player> actual = playerService.getPlayer(expected.getId());
+        when(playerRepository.findById(expected.getId()))
+            .thenReturn(java.util.Optional.of(expected));
 
-//         assertEquals(Optional.of(expected), actual);
+        Player actual = playerService.getPlayer(expected.getId());
 
-//         verify(playerRepository).findById(expected.getId());
-//     }
+        assertEquals(expected, actual);
 
-//     @Test
-//     void shouldThrowPlayerNotFound() {
-//         when(playerRepository.findById(1L))
-//             .thenReturn(Optional.empty());
+        verify(playerRepository).findById(expected.getId());
+    }
 
-//         Optional<Player> actual = playerService.getPlayer(1L);
+    @Test
+    void shouldThrowPlayerNotFound() {
+        when(playerRepository.findById(1L))
+            .thenReturn(java.util.Optional.empty());
 
-//         assertEquals(Optional.empty(), actual);
-//     }
+        RuntimeException exception = assertThrows(
+            RuntimeException.class,
+            () -> playerService.getPlayer(1L)
+        );
 
-//     @Test
-//     void shouldThrowExceptionWhenPlayerNotFoundWithGetScore() {
-//         when(playerRepository.findById(1L))
-//             .thenReturn(Optional.empty());
+        assertEquals("Player not found with id: 1", exception.getMessage());
+    }
 
-//         RuntimeException exception = assertThrows(
-//             RuntimeException.class,
-//             () -> playerService.getScore(1L)
-//         );
+    @Test
+    void shouldThrowExceptionWhenPlayerNotFoundWithGetScore() {
+        when(playerRepository.findById(1L))
+            .thenReturn(java.util.Optional.empty());
 
-//         assertEquals("Player not found", exception.getMessage());
-//     }
+        RuntimeException exception = assertThrows(
+            RuntimeException.class,
+            () -> playerService.getScore(1L)
+        );
 
-//     @Test
-//     void shouldThrowExceptionWhenPlayerNotFoundWithUpdateScore() {
-//         when(playerRepository.findById(1L))
-//             .thenReturn(Optional.empty());
+        assertEquals("Player not found with id: 1", exception.getMessage());
+    }
 
-//         RuntimeException exception = assertThrows(
-//             RuntimeException.class,
-//             () -> playerService.updateScore(1L)
-//         );
+    @Test
+    void shouldThrowExceptionWhenPlayerNotFoundWithUpdateScore() {
+        when(playerRepository.findById(1L))
+            .thenReturn(java.util.Optional.empty());
 
-//         assertEquals("Player not found", exception.getMessage());
-//     }
+        RuntimeException exception = assertThrows(
+            RuntimeException.class,
+            () -> playerService.updateScore(1L)
+        );
 
-//     @Test
-//     void shouldThrowExceptionWhenPlayerNotFoundWithDelete() {
-//         when(playerRepository.findById(1L))
-//             .thenReturn(Optional.empty());
+        assertEquals("Player not found with id: 1", exception.getMessage());
+    }
 
-//         RuntimeException exception = assertThrows(
-//             RuntimeException.class,
-//             () -> playerService.deletePlayer(1L)
-//         );
+    @Test
+    void shouldThrowExceptionWhenPlayerNotFoundWithDelete() {
+        when(playerRepository.findById(1L))
+            .thenReturn(java.util.Optional.empty());
 
-//         assertEquals("Player not found", exception.getMessage());
-//     }
+        RuntimeException exception = assertThrows(
+            RuntimeException.class,
+            () -> playerService.deletePlayer(1L)
+        );
 
-//     @Test
-//     void shouldReturnScore() {
-//         Player player = new Player();
-//         player.setId(1L);
-//         player.setScore(4);
+        assertEquals("Player not found with id: 1", exception.getMessage());
+    }
 
-//         when(playerRepository.findById(player.getId()))
-//             .thenReturn(Optional.of(player));
+    @Test
+    void shouldReturnScore() {
+        Player player = new Player();
+        player.setId(1L);
+        player.setScore(4);
 
-//         int expected = player.getScore();
-//         int actual = playerService.getScore(player.getId());
+        when(playerRepository.findById(player.getId()))
+            .thenReturn(java.util.Optional.of(player));
 
-//         assertEquals(expected, actual);
-//         verify(playerRepository).findById(player.getId());
-//     }
+        int expected = player.getScore();
+        int actual = playerService.getScore(player.getId());
 
-//     @Test
-//     void shouldUpdateScore() {
-//         Player player = new Player();
-//         player.setId(1L);
-//         player.setScore(4);
+        assertEquals(expected, actual);
+        verify(playerRepository).findById(player.getId());
+    }
 
-//         when(playerRepository.findById(player.getId()))
-//             .thenReturn(Optional.of(player));
+    @Test
+    void shouldUpdateScore() {
+        Player player = new Player();
+        player.setId(1L);
+        player.setScore(4);
 
-//         int expected = player.getScore() + 1;
+        when(playerRepository.findById(player.getId()))
+            .thenReturn(java.util.Optional.of(player));
 
-//         playerService.updateScore(player.getId());
+        int expected = player.getScore() + 1;
 
-//         int actual = player.getScore();
+        playerService.updateScore(player.getId());
 
-//         assertEquals(expected, actual);
-//         verify(playerRepository).findById(player.getId());
-//     }
+        int actual = player.getScore();
 
-//     @Test
-//     void shouldAddPlayer() {
-//         Player player = new Player();
-//         player.setId(1L);
-//         player.setName("Dummy");
-//         playerService.addPlayer(player);
-//         verify(playerRepository).save(player);
-//     }
+        assertEquals(expected, actual);
+        verify(playerRepository).findById(player.getId());
+    }
 
-//     @Test
-//     void shouldDeletePlayer() {
-//         Player player = new Player();
-//         player.setId(1L);
-//         player.setName("Dummy");
+    @Test
+    void shouldAddPlayer() {
+        Player player = new Player();
+        player.setId(1L);
+        player.setName("Dummy");
+        playerService.addPlayer(player);
+        verify(playerRepository).save(player);
+    }
 
-//         when(playerRepository.findById(player.getId()))
-//             .thenReturn(Optional.of(player));
+    @Test
+    void shouldDeletePlayer() {
+        Player player = new Player();
+        player.setId(1L);
+        player.setName("Dummy");
 
-//         playerService.deletePlayer(player.getId());
+        when(playerRepository.findById(player.getId()))
+            .thenReturn(java.util.Optional.of(player));
 
-//         verify(playerRepository).delete(player);
-//     }
-// }
+        playerService.deletePlayer(player.getId());
+
+        verify(playerRepository).delete(player);
+    }
+}
