@@ -32,5 +32,18 @@ CREATE TABLE IF NOT EXISTS trivia_choice (
         UNIQUE (question_id, display_order)
 );
 
+-- Admins
+CREATE TABLE admin (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Insert test admin
+insert into admin (username, password) VALUES ('me', '$2a$12$TkgmGwQEC0cVDNniG3B4PuDMsNjGde9rqZHRKhasQB8Ng9ddVG6xC');
+
+-- Question Choice ID Seq
 CREATE INDEX IF NOT EXISTS idx_trivia_choice_question_id
     ON trivia_choice(question_id);

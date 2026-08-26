@@ -40,20 +40,24 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
 
     @Transactional
     @Override
-    public void loadQuestions() {
-        Resource[] resources;
+    public void loadQuestions(int limit) {
         try {
-            resources = resolver.getResources("classpath:/data/*.json");
-        
+            Resource[] resources = resolver.getResources("classpath:/data/*.json");
 
             for (Resource resource : resources) {
+                int counter = 0;
                 System.out.println("Loading: " + resource.getFilename());
+
                 List<TriviaQuestionDTO> questions =
-                    objectMapper.readValue(
-                            resource.getInputStream(),
-                            new TypeReference<List<TriviaQuestionDTO>>() {});
+                        objectMapper.readValue(
+                                resource.getInputStream(),
+                                new TypeReference<List<TriviaQuestionDTO>>() {});
 
                 for (TriviaQuestionDTO dto : questions) {
+
+                    if (limit != -1 && counter >= limit) {
+                        break;
+                    }
 
                     TriviaQuestion question = new TriviaQuestion();
                     question.setQuestion(dto.getQuestion());
@@ -64,7 +68,6 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
                     short order = 1;
 
                     for (String choiceText : dto.getChoices()) {
-
                         TriviaChoice choice = new TriviaChoice();
                         choice.setQuestion(question);
                         choice.setChoiceText(choiceText);
@@ -73,13 +76,18 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
 
                         choices.add(choice);
                     }
+
                     question.setChoices(choices);
                     triviaQuestionRepository.save(question);
+
+                    counter++;
                 }
             }
+
             System.out.println("All resources loaded");
+
         } catch (IOException e) {
-                throw new RuntimeException("Failed to load questions");
+            throw new RuntimeException("Failed to load questions", e);
         }
     }
 
