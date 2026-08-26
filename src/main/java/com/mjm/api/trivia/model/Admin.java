@@ -1,6 +1,7 @@
 package com.mjm.api.trivia.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -20,8 +21,10 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message="Username required")
     private String username;
 
+    @NotBlank(message="Password required")
     private String password;
 
     @Column(

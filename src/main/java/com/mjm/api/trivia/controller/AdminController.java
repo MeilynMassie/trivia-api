@@ -4,6 +4,9 @@ import com.mjm.api.trivia.model.Admin;
 import com.mjm.api.trivia.service.AdminService;
 import com.mjm.api.trivia.service.PlayerService;
 import com.mjm.api.trivia.service.TriviaQuestionService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 
@@ -32,13 +35,12 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public void getAdmin(@PathVariable Long id) {
-        boolean admin = adminService.getAdmin(id);
-        System.out.println("Exist: " + admin);
+    public String getAdmin(@PathVariable Long id) {
+        return adminService.getAdmin(id);
     }
 
     @PostMapping
-    public void addAdmin(@RequestBody Admin admin) {
+    public void addAdmin(@Valid @RequestBody Admin admin) {
         adminService.addAdmin(admin);
     }
 

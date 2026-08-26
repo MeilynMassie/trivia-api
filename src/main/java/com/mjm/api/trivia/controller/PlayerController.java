@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import com.mjm.api.trivia.model.Player;
 import com.mjm.api.trivia.service.PlayerService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +29,7 @@ public class PlayerController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Player> getPlayer(@PathVariable Long id) {
+    public Player getPlayer(@PathVariable Long id) {
         return playerService.getPlayer(id);
     }
 
@@ -36,7 +39,7 @@ public class PlayerController {
     }
 
     @PostMapping
-    public void addPlayer(@RequestBody Player player) {
+    public void addPlayer(@Valid @RequestBody Player player) {
         playerService.addPlayer(player);
     }
 

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.mjm.api.trivia.exception.ResourceNotFoundException;
 import com.mjm.api.trivia.model.Player;
 import com.mjm.api.trivia.repository.PlayerRepository;
 import com.mjm.api.trivia.service.PlayerService;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PlayerServiceImpl implements PlayerService{
     private PlayerRepository playerRepository;
+    private final String className = Player.class.getSimpleName();
+
     public PlayerServiceImpl(PlayerRepository playerRepository) {this.playerRepository = playerRepository;}
 
 
@@ -24,15 +27,16 @@ public class PlayerServiceImpl implements PlayerService{
 
 
     @Override
-    public Optional<Player> getPlayer(long id) {
-        return playerRepository.findById(id);
+    public Player getPlayer(long id) {
+        return playerRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(className, id));
     }
 
 
     @Override
     public int getScore(long id) {
         return playerRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Player not found"))
+            .orElseThrow(() -> new ResourceNotFoundException(className, id))
             .getScore();
     }
 
@@ -41,7 +45,7 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public void updateScore(long id) {
         Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Player not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(className, id));
         player.setScore(player.getScore() + 1);
     }
 
@@ -56,8 +60,7 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public void deletePlayer(long id) {
         Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Player not found"));
-                
+                .orElseThrow(() -> new ResourceNotFoundException(className, id));
         playerRepository.delete(player);
     }
 }

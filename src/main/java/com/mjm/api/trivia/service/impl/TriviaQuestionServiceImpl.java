@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.mjm.api.trivia.dto.TriviaQuestionDTO;
+import com.mjm.api.trivia.exception.ResourceNotFoundException;
 import com.mjm.api.trivia.model.TriviaChoice;
 import com.mjm.api.trivia.model.TriviaQuestion;
 import com.mjm.api.trivia.repository.TriviaQuestionRepository;
@@ -24,6 +25,8 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     private TriviaQuestionRepository triviaQuestionRepository;
     private ObjectMapper objectMapper;
     private final ResourcePatternResolver resolver;
+    private final String classNameQuestion = TriviaQuestion.class.getSimpleName();
+    private final String classNameChoice = TriviaChoice.class.getSimpleName();
                 
 
     public TriviaQuestionServiceImpl(TriviaQuestionRepository triviaQuestionRepository, ObjectMapper objectMapper, ResourcePatternResolver resolver) { 
@@ -106,12 +109,12 @@ public class TriviaQuestionServiceImpl implements TriviaQuestionService{
     @Override
     public Boolean checkAnswer(Long questionId, Long choiceId) {
         TriviaQuestion question = triviaQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(classNameQuestion, questionId));
         return question.getChoices()
                 .stream()
                 .filter(c -> c.getId().equals(choiceId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Choice not found"))
+                .orElseThrow(() -> new ResourceNotFoundException(classNameChoice, choiceId))
                 .getIsCorrect();
     }
 }
